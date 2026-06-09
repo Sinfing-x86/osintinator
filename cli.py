@@ -29,6 +29,10 @@ from core.coordinator import coordinator
 from core.exceptions import handle_exception
 from core.models import Target, EntityType, CaseClassification
 from modules.ingestion import IngestionHandler
+from modules.username import UsernameHandler
+from modules.network import NetworkHandler
+from modules.geospatial import GeospatialHandler
+from modules.analysis import AnalysisHandler
 
 # Initialize Typer app with rich help
 app = typer.Typer(
@@ -46,7 +50,10 @@ def callback():
     initialize()
     # Register core modules
     coordinator.register_module("ingestion", IngestionHandler.run)
-    # Future modules will be registered here
+    coordinator.register_module("username", UsernameHandler.run)
+    coordinator.register_module("network", NetworkHandler.run)
+    coordinator.register_module("geospatial", GeospatialHandler.run)
+    coordinator.register_module("analysis", AnalysisHandler.run)
 
 
 @app.command("track")

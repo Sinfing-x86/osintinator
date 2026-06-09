@@ -1,0 +1,67 @@
+<!-- templates/report_theme.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OSINTINATOR - Intelligence Briefing</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1, h2 { color: #1e3a8a; }
+        .header { text-align: center; border-bottom: 3px solid #1e3a8a; padding-bottom: 20px; }
+        .section { margin: 30px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid #64748b; padding: 10px; text-align: left; }
+        th { background-color: #1e40af; color: white; }
+        .highlight { background-color: #f0f9ff; }
+    </style>
+</head>
+<body>
+    <h1>!!Sample heading test!!</h1>
+    <div class="header">
+        <h1>OSINTINATOR Intelligence Briefing</h1>
+        <p>Case ID: {{ report.case_id }} | Generated: {{ report.generated_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Target Profile</h2>
+        <table>
+            <tr><th>Full Name</th><td>{{ report.target.full_name or 'N/A' }}</td></tr>
+            <tr><th>Entity Type</th><td>{{ report.target.entity_type.value }}</td></tr>
+            <tr><th>Case Classification</th><td>{{ report.target.classification.value }}</td></tr>
+            <tr><th>Last Known Location</th><td>{{ report.target.last_known_location or 'N/A' }}</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Intelligence Summary</h2>
+        <p><strong>{{ report.summary }}</strong></p>
+    </div>
+
+    <div class="section">
+        <h2>Key Intelligence Items</h2>
+        <table>
+            <tr><th>Source</th><th>Content</th><th>Timestamp</th></tr>
+            {% for item in report.intelligence_items[:10] %}
+            <tr>
+                <td>{{ item.source }}</td>
+                <td>{{ item.content[:200] }}{% if item.content|length > 200 %}...{% endif %}</td>
+                <td>{{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Insights & Recommendations</h2>
+        <ul>
+            {% for insight in report.metadata.get('insights', []) %}
+            <li>{{ insight }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <footer style="margin-top: 50px; text-align: center; color: #64748b;">
+        <p>OSINTINATOR v1.0 | For Official Law Enforcement Use Only</p>
+    </footer>
+</body>
+</html>

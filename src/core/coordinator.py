@@ -24,6 +24,7 @@ from .models import (
     WorkflowTask,
     ApiResponseEnvelope,
 )
+from modules.reporting import generate_briefing
 
 logger = logging.getLogger(__name__)
 
@@ -156,8 +157,18 @@ class Coordinator:
                 return_exceptions=True
             )
             self.tasks.extend(enrichment_tasks)
+
+        # === Phase 3: Analysis ===
+        analysis_task = WorkflowTask(
+        target=target,
+        module="analysis",
+        action="analyze",
+        parameters={"intelligence": [item.model_dump() for item in self.intelligence]}
+        )
+        await self._execute_task(analysis_task)
+        self.tasks.append(analysis_task)
         
-        # === Phase 3: Analysis & Report Generation ===
+        # === Phase 4: Analysis & Report Generation ===
         report = self._generate_report(target)
         
         logger.info(f"Completed workflow for case {target.case_id}. "
